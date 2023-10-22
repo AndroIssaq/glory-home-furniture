@@ -1,65 +1,66 @@
+export const dynamicParams=true
+import React from 'react'
 import { createClient } from 'contentful';
 import Image from 'next/image';
 import SingleProduct from '@/components/SingleProduct';
 import RelatedProducts from '@/components/RelatedProducts';
+import next from 'next';
 
-export async function getStaticPaths() {
+export async function generateStaticParams() {
+  const client = createClient({
+    space: 'wqjm0ul81wfi',
+    environment: 'master', // defaults to 'master' if not set
+    accessToken: '1HOop-wSR5WmMg-bEn7Kythm5IZVtZijsDiW5qjAbFk'
+  })
+  
+  const res = await client.getEntries({ content_type: 'bedRooms' });
+return  res.items.map((item) =>({
+  id:Array.from([item.sys.id])
+}))
+
+}
+const getSingleProduct=async ({id})=>{
   try {
+    console.log('id:',id);
     const client = createClient({
-      space: process.env.CONTENTFUL_SPACE_ID,
-      environment: process.env.CONTENTFUL_ENVIRONMENT,
-      accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-    });
-    const res = await client.getEntries({ content_type: 'bedRooms' });
-    const paths = res.items.map((item) => ({
-      params: { id: item.sys.id },
-    }));
-    return { paths, fallback: true };
-  } catch (err) {
-    console.error('Error fetching data:', err);
-    return { paths: [], fallback: true };
+      space: 'wqjm0ul81wfi',
+      environment: 'master', // defaults to 'master' if not set
+      accessToken: '1HOop-wSR5WmMg-bEn7Kythm5IZVtZijsDiW5qjAbFk'
+    })
+    const response=await client.getEntries({content_type:'bedRooms','sys.id':id}, {next:{revalidate:10}})
+    return response.items
+  } catch (error) {
+    console.log(error)
   }
+ 
 }
 
-export async function getStaticProps({ params }) {
+const getRelatedProducts=async ({id})=>{
   try {
     const client = createClient({
-      space: process.env.CONTENTFUL_SPACE_ID,
-      environment: process.env.CONTENTFUL_ENVIRONMENT,
-      accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-    });
-    const res = await client.getEntries({
-      content_type: 'bedRooms',
-      'sys.id': params.id,
-    });
-    if (!res.items.length) {
-      return { notFound: true };
-    }
-    const bedroom = res.items[0];
-    return {
-      props: { bedroom },
-      revalidate: 10,
-    };
-  } catch (err) {
-    console.error('Error fetching data:', err);
-    return { notFound: true };
+      space: 'wqjm0ul81wfi',
+      environment: 'master', // defaults to 'master' if not set
+      accessToken: '1HOop-wSR5WmMg-bEn7Kythm5IZVtZijsDiW5qjAbFk'
+    })
+    const response=await client.getEntries({content_type:'bedRooms'})
+    const relatedItems=response.items.filter((item,index)=>item.sys.id!==id)
+    console.log(relatedItems);
+    return relatedItems
+  } catch (error) {
+    console.log(error)
   }
+ 
 }
-
-const BedRooms = ({ bedroom }) => {
-  const { name, images, price, description } = bedroom.fields;
-  const imageData = images[0].fields.file;
+const BedRoomProduct = async({params}) => {
+  const id=params.id[0]
+const data= await getSingleProduct({id})
+const relatedProducts=await getRelatedProducts({id})
   return (
     <>
-      <SingleProduct
-        name={name}
-        price={price}
-        description={description}
-        image={imageData}
-      />
-      <RelatedProducts page="bed-room" id={bedroom.sys.id} />
-    </>
-  );
-};
+    <SingleProduct data={data} />
+    <RelatedProducts relatedProducts={relatedProducts} page={'bed-room'}/>
+  </>
+  )
+}
 
-export default BedRooms;
+export default BedRoomProduct
