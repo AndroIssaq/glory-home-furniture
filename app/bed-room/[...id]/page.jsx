@@ -5,18 +5,19 @@ import SingleProduct from '@/components/SingleProduct';
 import RelatedProducts from '@/components/RelatedProducts';
 
 export async function generateStaticParams() {
-  const client = createClient({
-    space: 'wqjm0ul81wfi',
-    environment: 'master', // defaults to 'master' if not set
-    accessToken: '1HOop-wSR5WmMg-bEn7Kythm5IZVtZijsDiW5qjAbFk'
-  })
-  
-  const res = await client.getEntries({ content_type: 'bedRooms' });
-return  res.items.map((item) =>({
-  id:Array.from([item.sys.id]),
-  fullback:true
-}))
-
+  try {
+    const client = createClient({
+      space: 'wqjm0ul81wfi',
+      environment: 'master', // defaults to 'master' if not set
+      accessToken: '1HOop-wSR5WmMg-bEn7Kythm5IZVtZijsDiW5qjAbFk'
+    });
+    const res = await client.getEntries({ content_type: 'bedRooms' });
+    return res.items.map((item) => ({ id: Array.from([item.sys.id]) }));
+  } catch (err) {
+    // Return a fallback page if an error occurs
+    console.error('Error fetching data:', err);
+    return [{ id: ['fallback'] }];
+  }
 }
 const getSingleProduct=async ({id})=>{
   try {
