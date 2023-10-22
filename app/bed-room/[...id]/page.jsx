@@ -13,7 +13,8 @@ export async function generateStaticParams() {
   
   const res = await client.getEntries({ content_type: 'bedRooms' });
 return  res.items.map((item) =>({
-  id:Array.from([item.sys.id])
+  id:Array.from([item.sys.id]),
+  fullback:true
 }))
 
 }
