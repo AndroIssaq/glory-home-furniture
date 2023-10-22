@@ -2,26 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  height: auto;
+}
+.container{
+  width: 90%;
+  margin: auto;
+}
+::-webkit-scrollbar{
+  width: 5px;
+}
+::-webkit-scrollbar-track{
+  background: #56214d00;
+}
+::-webkit-scrollbar-thumb{
+  background: #06012f91;
+  width: 5px;
+  border-radius: 5px;
+  transition: .3s;
+}
+::-webkit-scrollbar-thumb:hover{
+  background: #ffec00;
+}
+h1{
+  line-height: 70px !important;
+}
+span{
+  line-height: 40px !important;
+}
+.react-parallax-content{
+  width: 100%;
+  height: 100%;
+}
+.react-parallax-bgimage{
+  background-size: cover;
+}
+.whospan{
+  line-height: 30px !important;
+}
+.refrence-card{
+  transition: .3s;
+}
+.refrence-card:hover .refrence-card-image{
+  transform: scale(1.3);
+}
+.refrence-dev{
+  transition: .9s;
+  color: aliceblue
+
+}
+.refrence-card:hover .refrence-dev{
+  background: #000000bb;
+  font-size: 40px !important;
+  color: aliceblue;
+}
+.refrence-card-image{
+  transition: .6s;
+  object-fit: cover;
+}
+.download-active{
+  opacity: 1;
+  z-index: 100;
+}
+.download-not-active{
+  opacity: 0;
+  z-index: -100;
 }
